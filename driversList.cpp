@@ -1,18 +1,19 @@
 //
-//  main.cpp
-//  FormulaDriverListLinkedList
+//  FormulaDriversLinkedList.cpp
+//  FormulaDriversListLinkedList
 //
 //  Created by Bahadır Yurtkulu on 27.02.2017.
 //  Copyright © 2017 Bahadir. All rights reserved.
 //
 
 #include <iostream>
-#include <string.h>
-#include <vector>
+#include <string>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
+#include <cctype>
 #include "strutils.h"
+
+
 
 using namespace std;
 
@@ -107,8 +108,10 @@ void sumPoints(node* headPtr, string driverName, int driverPoint) {
            
             if (headPtr->point <= 0) {
                 //delete this node
+                cout << driverName << " has been removed from the list since his points became non-positive.\n";
                 prev->next = headPtr->next;
                 headPtr->next = NULL;
+                headPtr = NULL;
             }
             else {
                 cout << headPtr->name << " has been updated and new point is " << headPtr->point << '\n';
@@ -130,6 +133,7 @@ void sumPoints(node* headPtr, string driverName, int driverPoint) {
 
 int main() {
     int option;
+    string optionStr;
     node* headPtr = nullptr;
     node* prevPtr = nullptr;
     node* tempHead = nullptr;
@@ -149,22 +153,24 @@ int main() {
     while (true) {
         
         
-        cout << "Formula 1 Points Table System" << endl;
-        cout << "-----------------------------" << endl;
+        cout << "\nFormula 1 Points Table System" << endl;
+        cout << "---------------------------------" << endl;
         cout << "Please select one option [1..4]: " << endl;
         cout << "1. Load driver names and points from a file\n";
         cout << "2. Insert a new driver / Modify points of an existing driver\n";
         cout << "3. Display points table in alphabetical order\n";
         cout << "4. Exit" << endl;
         
-        cin >> option;
+        cin >> optionStr;
+        option = atoi(optionStr);
+        
         while (option > 4 || option < 1) {
             cout << "Oops! This is not a valid option. Enter again: \n";
-            cin.clear();
-            cin >> option;
+            cin >> optionStr;
+            option = atoi(optionStr);
         }
         
-        if (option == 1) {
+         if (option == 1) {
             //Load driver names and points from a file
             
             headPtr = new node; //create initial node.
@@ -184,7 +190,6 @@ int main() {
                 cin >> fileName;
                 driverFile.open(fileName);
             }
-            /********************************/
             
             
             
@@ -223,19 +228,49 @@ int main() {
             
         }
         
-        if (option == 2) {
+        else if (option == 2) {
             //Insert a new driver / Modify points of an existing driver
+            cout << "Please enter name of the driver you wish to add/modify: ";
+            cin >> driverName;
+            cout << "Please enter how many points you wish to initialize/add/remove: ";
+            cin >> driverPoint;
             
+            isExist = SearchList(headPtr, driverName);
+            
+            if(!isExist) {
+                
+                if (driverPoint > 0) {
+                    //if it is not exist create a node
+                    tempHead = new node(driverName, driverPoint, NULL);
+                    
+                    //insert it to the linked list alphabetically.
+                    insertAlphabetically(headPtr, tempHead);
+                    cout << driverName << " has been added to the list with initial points " << driverPoint << '\n';
+                }
+                
+                else {
+                    cout << driverName << " has not been added since the initial points cannot be non-positive.\n";
+                }
+            }
+            
+            else {
+                
+                //If exists in the linked list
+                //sum points.
+                sumPoints(headPtr, driverName, driverPoint);
+            }
         }
         
-        if (option == 3) {
+        else if (option == 3) {
             //Display points table in alphabetical order
             
             if (headPtr != nullptr) {
             
                 tempHead = headPtr;
-                cout << "Points Table\n";
+                cout << "\nPoints Table\n";
                 cout << "----------------------------\n";
+                
+                tempHead = tempHead->next; // do not print head node, @Mr. Nobody.
                 while (tempHead != NULL) {
                     cout << tempHead->name << "  " << tempHead->point << '\n';
                     tempHead = tempHead->next;
@@ -243,11 +278,13 @@ int main() {
             }
             
             else {
-                cout << "The points table is empty.\n\n";
+                cout << "\nThe points table is empty.\n\n";
             }
+            
+            tempHead = nullptr;
         }
         
-        if (option == 4) {
+        else if (option == 4) {
             
             //return all the dynamically allocated memory to the heap before the termination
             
