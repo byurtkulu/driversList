@@ -1,6 +1,6 @@
 //
-//  FormulaDriversLinkedList.cpp
-//  FormulaDriversListLinkedList
+//  main.cpp
+//  FormulaDriverListLinkedList
 //
 //  Created by Bahadır Yurtkulu on 27.02.2017.
 //  Copyright © 2017 Bahadir. All rights reserved.
@@ -18,13 +18,19 @@
 using namespace std;
 
 
-/*************************************************************************/
 
 
+
+// To store the drivers data.
+// It has 3 types of data:
+//    Driver Name (string)
+//    Driver Point (int)
+//    Next (pointer, which points to the next node)
+//
 struct node {
     string name;
     int point;
-    node * next;
+    node * next; // points to next node or to NULL.
     
     //default constructor
     node()
@@ -39,8 +45,16 @@ struct node {
 
 
 
-/*************************************************************************/
 
+
+// Searchs given string in a linked list.
+// Takes two parameter:
+//       head pointer of the linked list
+//       string to be searched
+//
+//
+
+//**** This function is directly copied from linkedList.cpp ****//
 
 bool SearchList(node *head, string searchValue)
 {
@@ -59,15 +73,42 @@ bool SearchList(node *head, string searchValue)
 
 
 
-/*************************************************************************/
 
-
+// add a seperately created node to the linked list alphabetically.
+//
 void insertAlphabetically (node* headPtr, node* &tempHead) {
     
+    // compare function compare two string alphabetically.
+    // str1.compare(str2)
+    // if str1 comes first alphabetically func returns negative integer
+    // if they are same it returns zero
+    // else (str2 comes first) it returns positive integer
+    //
+    
+    // checks the next node's name
+    // compare them if new drivers name is smaller then the
+    // next nodes driver names, insert new driver before the next one.
+    //
+    //             head node     next        ...
+    //              --------    -------    -------
+    //  headPtr --> | head |--->| 1st |--->| 2nd |---> ... ---> NULL
+    //              --------    -------    -------
+    //
+    //               ---------------
+    //  tempHead --> |  new node   |
+    //               | driver data | --> NULL
+    //               ---------------
+    //
+    //
     while (headPtr != NULL) {
         
-        if (headPtr != NULL && headPtr->next != NULL) {
+        if (headPtr != NULL && headPtr->next != NULL) {  // short circuit evaluation is used.
+            
+
+            
+            
             if (tempHead->name.compare((headPtr->next)->name) < 0) {
+
                 tempHead->next = headPtr->next;
                 headPtr->next = tempHead;
                 
@@ -92,9 +133,12 @@ void insertAlphabetically (node* headPtr, node* &tempHead) {
 }
 
 
-/*************************************************************************/
 
-
+// if new drivers name exists in the list
+// find drivers node and sum the points
+// if negative or zero, delete the node.
+// else update.
+//
 void sumPoints(node* headPtr, string driverName, int driverPoint) {
     node* prev = headPtr;
     
@@ -128,8 +172,15 @@ void sumPoints(node* headPtr, string driverName, int driverPoint) {
 
 
 
-/*************************************************************************/
 
+
+
+
+///////////////////////////
+//=======================//
+//==== MAIN FUNCTION ====//
+//=======================//
+///////////////////////////
 
 int main() {
     int option;
